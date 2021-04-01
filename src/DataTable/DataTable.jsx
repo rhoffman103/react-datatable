@@ -1,20 +1,46 @@
 import React from 'react';
-import {useFlexLayout, useResizeColumns, useTable, useSortBy} from "react-table";
+import {useFlexLayout, useResizeColumns, useTable, useSortBy, useFilters} from "react-table";
 import {FixedSizeList} from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import scrollbarWidth from "../Util/scrollbarWidth";
 import {flexHeaderProps, flexCellProps} from "../Util/getStyles";
+import InputColumnFilter from "./Filter/InputColumnFilter";
+import {fuzzyTextFilterFn} from "./Filter/utils";
 
 const DataTable = ({ data, columns }) => {
   const headerRef = React.useRef();
   const toolbarRef = React.useRef();
-  const defaultColumn = React.useMemo(() => ({minWidth: 30, width: 150, maxWidth: 200}), []);
   const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
+  const defaultColumn = React.useMemo(() => ({
+    minWidth: 30, width: 150, maxWidth: 200,
+    Filter: InputColumnFilter,
+  }), []);
 
-  const {getTableProps, getTableBodyProps, headerGroups, rows, totalColumnsWidth, prepareRow} = useTable(
-    {columns, data, defaultColumn},
+  const filterTypes = React.useMemo(
+    () => ({
+      // Add a new fuzzyTextFilterFn filter type.
+      fuzzyText: fuzzyTextFilterFn,
+      // Or, override the default text filter to use
+      // "startWith"
+      text: (rows, id, filterValue) => {
+        return rows.filter(row => {
+          const rowValue = row.values[id]
+          return rowValue !== undefined
+            ? String(rowValue)
+              .toLowerCase()
+              .startsWith(String(filterValue).toLowerCase())
+            : true
+        })
+      },
+    }),
+    []
+  );
+
+  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, preGlobalFilteredRows} = useTable(
+    {columns, data, defaultColumn, filterTypes},
     useResizeColumns,
     useFlexLayout,
+    useFilters,
     useSortBy
   );
 
@@ -42,7 +68,7 @@ const DataTable = ({ data, columns }) => {
   const computeWidth = React.useCallback((containerWidth) => {
     const minWidth = minTableWidth + scrollBarSize
     return containerWidth >= minWidth ? containerWidth : minWidth;
-  }, [totalColumnsWidth, scrollBarSize, minTableWidth]);
+  }, [scrollBarSize, minTableWidth]);
 
   const computeHeight = React.useCallback((containerHeight) => {
     const hHeight = headerRef.current ? headerRef.current.clientHeight : 0;
@@ -52,7 +78,29 @@ const DataTable = ({ data, columns }) => {
 
   return (
     <div className="table-wrapper w-100 h-100 p-1">
-      <div className="table-toolbar" ref={toolbarRef}>toolbar</div>
+
+      <div className="table-toolbar" ref={toolbarRef}>
+
+        <div className="table-filters">
+          {headerGroups.map((headerGroup, i) => (
+            <React.Fragment key={`filter-group${i}`}>
+              {headerGroup.headers.reduce((filters, column, j) => {
+                console.log(column)
+                if (column.canFilter) {
+                  filters.push(
+                    <div key={`filter${column.accessor}${j}`}>
+                      {console.log(column.render('Filter'))}
+                      {column.render('Filter')}
+                    </div>
+                  );
+                }
+                return filters;
+              }, [])}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
       <AutoSizer>
         {({ width, height }) => {
           width = computeWidth(width);
@@ -67,12 +115,12 @@ const DataTable = ({ data, columns }) => {
                       <div {...column.getHeaderProps(flexHeaderProps)} {...column.getHeaderProps(column.getSortByToggleProps())} className="th">
                         {column.render('Header')}
                         <span className="ml-auto">
-                        {column.isSorted
-                          ? column.isSortedDesc
-                            ? <>&#9650;</>
-                            : <>&#9660;</>
-                          : <></>}
-                      </span>
+                          {column.isSorted
+                            ? column.isSortedDesc
+                              ? <>&#9650;</>
+                              : <>&#9660;</>
+                            : <></>}
+                        </span>
                       </div>
                     ))}
                   </div>

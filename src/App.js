@@ -1,5 +1,7 @@
 import React, {useEffect, useMemo, useState} from "react";
 import DataTable from "./DataTable";
+import SelectColumnFilter from "./DataTable/Filter/SelectColumnFilter";
+import InputColumnFilter from "./DataTable/Filter/InputColumnFilter";
 
 function App() {
   const [data, setData] = useState([]);
@@ -10,18 +12,23 @@ function App() {
       Header: "Type",
       width: 150,
       minWidth: 150,
+      Filter: SelectColumnFilter,
+      filter: "includes"
     },
     {
       accessor: "number",
       Header: "Number",
       width: 150,
-      minWidth: 200
+      minWidth: 200,
+      disableFilters: true
     },
     {
       accessor: "expiration",
       Header: "Exp.",
       width: 75,
-      minWidth: 75
+      minWidth: 75,
+      Filter: InputColumnFilter,
+      filter: "contains"
     }
   ], []);
 
