@@ -32,8 +32,13 @@ function App() {
   }, []);
 
   return (
-    <div className="App p-5">
-      <DataTable data={data} columns={columns} />
+    <div className="App">
+      <div style={{
+        height: "75vh",
+        width: "100%",
+      }}>
+        <DataTable data={data} columns={columns} />
+      </div>
     </div>
   );
 }

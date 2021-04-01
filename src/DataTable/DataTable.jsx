@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useFlexLayout, useResizeColumns, useTable} from "react-table";
 import {FixedSizeList} from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -6,14 +6,17 @@ import scrollbarWidth from "../Util/scrollbarWidth";
 import {flexHeaderProps, flexCellProps} from "../Util/getStyles";
 
 const DataTable = ({ data, columns }) => {
+  const headerRef = React.useRef();
   const defaultColumn = React.useMemo(() => ({minWidth: 30, width: 150, maxWidth: 200}), []);
   const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
 
-  const {getTableProps, getTableBodyProps, headerGroups, rows, totalColumnsWidth, prepareRow} = useTable(
+  const {getTableProps, getTableBodyProps, headerGroups, rows, totalColumnsWidth, prepareRow, ...rest} = useTable(
     {columns, data, defaultColumn},
     useResizeColumns,
     useFlexLayout,
   );
+
+  const minTableWidth = React.useMemo(() => parseInt(getTableProps().style.minWidth.replace("px", "")), [totalColumnsWidth]);
 
   const RenderRow = React.useCallback(
     ({index, style}) => {
@@ -35,43 +38,51 @@ const DataTable = ({ data, columns }) => {
   );
 
   const computeWidth = React.useCallback((containerWidth) => {
-    const minWidth = totalColumnsWidth + scrollBarSize;
+    // const minWidth = totalColumnsWidth + scrollBarSize;
+    const minWidth = minTableWidth + scrollBarSize
     return containerWidth >= minWidth ? containerWidth : minWidth;
   }, [totalColumnsWidth, scrollBarSize]);
 
+  const computeHeight = React.useCallback((containerHeight) => {
+    const hHeight = headerRef.current ? headerRef.current.clientHeight : 0;
+    return containerHeight - scrollBarSize - hHeight;
+  }, [scrollBarSize, headerRef]);
+
   return (
-    <AutoSizer className="table-wrapper">
-      {({ width, height }) => {
-        width = computeWidth(width);
+    <div className="table-wrapper w-100 h-100 p-1">
+      <AutoSizer>
+        {({ width, height }) => {
+          width = computeWidth(width);
 
-        return (
-        <div {...getTableProps()} className="table" style={{ width }}>
-          <div style={{ width: width - scrollBarSize + "px" }}>
-            {headerGroups.map(headerGroup => (
-              <div {...headerGroup.getHeaderGroupProps()} className="tr" >
-                {headerGroup.headers.map(column => (
-                  <div {...column.getHeaderProps(flexHeaderProps)} className="th">
-                    {column.render('Header')}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+          return (
+          <div {...getTableProps()} className="table" style={{ width }}>
+            <div style={{ width: width - scrollBarSize + "px" }} ref={headerRef}>
+              {headerGroups.map(headerGroup => (
+                <div {...headerGroup.getHeaderGroupProps()} className="tr" >
+                  {headerGroup.headers.map(column => (
+                    <div {...column.getHeaderProps(flexHeaderProps)} className="th">
+                      {column.render('Header')}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
 
-          <div {...getTableBodyProps()}>
-            <FixedSizeList
-              height={400}
-              itemCount={rows.length}
-              itemSize={35}
-              width={width}
-            >
-              {RenderRow}
-            </FixedSizeList>
+            <div {...getTableBodyProps()}>
+              <FixedSizeList
+                height={computeHeight(height)}
+                itemCount={rows.length}
+                itemSize={35}
+                width={width}
+              >
+                {RenderRow}
+              </FixedSizeList>
+            </div>
           </div>
-        </div>
-      )}}
-    </AutoSizer>
+        )}}
+      </AutoSizer>
+    </div>
   );
-}
+};
 
 export default DataTable;
