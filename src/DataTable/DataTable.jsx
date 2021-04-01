@@ -7,6 +7,7 @@ import {flexHeaderProps, flexCellProps} from "../Util/getStyles";
 
 const DataTable = ({ data, columns }) => {
   const headerRef = React.useRef();
+  const toolbarRef = React.useRef();
   const defaultColumn = React.useMemo(() => ({minWidth: 30, width: 150, maxWidth: 200}), []);
   const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
 
@@ -38,18 +39,19 @@ const DataTable = ({ data, columns }) => {
   );
 
   const computeWidth = React.useCallback((containerWidth) => {
-    // const minWidth = totalColumnsWidth + scrollBarSize;
     const minWidth = minTableWidth + scrollBarSize
     return containerWidth >= minWidth ? containerWidth : minWidth;
   }, [totalColumnsWidth, scrollBarSize]);
 
   const computeHeight = React.useCallback((containerHeight) => {
     const hHeight = headerRef.current ? headerRef.current.clientHeight : 0;
-    return containerHeight - scrollBarSize - hHeight;
+    const tHeight = toolbarRef.current ? toolbarRef.current.clientHeight : 0;
+    return containerHeight - scrollBarSize - hHeight - tHeight;
   }, [scrollBarSize, headerRef]);
 
   return (
     <div className="table-wrapper w-100 h-100 p-1">
+      <div className="table-toolbar" ref={toolbarRef}>toolbar</div>
       <AutoSizer>
         {({ width, height }) => {
           width = computeWidth(width);
