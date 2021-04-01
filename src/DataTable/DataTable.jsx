@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {useFlexLayout, useResizeColumns, useTable} from "react-table";
 import {FixedSizeList} from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -56,7 +56,8 @@ const DataTable = ({ data, columns }) => {
 
           return (
           <div {...getTableProps()} className="table" style={{ width }}>
-            <div style={{ width: width - scrollBarSize + "px" }} ref={headerRef}>
+            
+            <div className="thead" style={{ width: width - scrollBarSize + "px" }} ref={headerRef}>
               {headerGroups.map(headerGroup => (
                 <div {...headerGroup.getHeaderGroupProps()} className="tr" >
                   {headerGroup.headers.map(column => (

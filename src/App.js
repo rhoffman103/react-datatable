@@ -9,18 +9,24 @@ function App() {
       accessor: "type",
       Header: "Type",
       width: 150,
-      minWidth: 150
+      minWidth: 150,
     },
     {
       accessor: "number",
       Header: "Number",
       width: 150,
-      minWidth: 300
+      minWidth: 200
+    },
+    {
+      accessor: "expiration",
+      Header: "Exp.",
+      width: 75,
+      minWidth: 75
     }
   ], []);
 
   useEffect(() => {
-    fetch("https://fakerapi.it/api/v1/credit_cards?_quantity=100")
+    fetch("https://fakerapi.it/api/v1/credit_cards?_quantity=200")
       .then((response) => {
         if (response.ok) return response.json();
         return Promise.reject(response);
