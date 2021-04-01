@@ -14,6 +14,10 @@
     /* These styles are required for a scrollable body to align with the header properly */
     overflow-y: auto;
     overflow-x: hidden;
+
+    & .th {
+      display: flex;
+    }
   }
 
   .tbody {

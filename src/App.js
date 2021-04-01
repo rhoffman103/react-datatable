@@ -26,7 +26,7 @@ function App() {
   ], []);
 
   useEffect(() => {
-    fetch("https://fakerapi.it/api/v1/credit_cards?_quantity=200")
+    fetch("https://fakerapi.it/api/v1/credit_cards?_quantity=1000")
       .then((response) => {
         if (response.ok) return response.json();
         return Promise.reject(response);
@@ -43,7 +43,7 @@ function App() {
         height: "75vh",
         width: "100%",
       }}>
-        <DataTable data={data} columns={columns} />
+        <DataTable data={data} columns={columns}/>
       </div>
     </div>
   );
