@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import DataTable from "./DataTableV2/DataTable";
+import DataTable from "./DataTable";
 
 function App() {
   const [data, setData] = useState([]);
