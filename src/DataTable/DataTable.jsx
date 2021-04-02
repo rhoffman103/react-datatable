@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useFlexLayout, useResizeColumns, useTable, useSortBy, useFilters} from "react-table";
 import {FixedSizeList} from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import scrollbarWidth from "../Util/scrollbarWidth";
 import {flexHeaderProps, flexCellProps} from "../Util/getStyles";
 import InputColumnFilter from "./Filter/InputColumnFilter";
-import {fuzzyTextFilterFn} from "./Filter/utils";
+import {useDataTableContext} from "./DataTableContext";
 
 const DataTable = ({ data, columns }) => {
   const headerRef = React.useRef();
@@ -16,28 +16,12 @@ const DataTable = ({ data, columns }) => {
     Filter: InputColumnFilter,
   }), []);
 
-  const filterTypes = React.useMemo(
-    () => ({
-      // Add a new fuzzyTextFilterFn filter type.
-      fuzzyText: fuzzyTextFilterFn,
-      // Or, override the default text filter to use
-      // "startWith"
-      text: (rows, id, filterValue) => {
-        return rows.filter(row => {
-          const rowValue = row.values[id]
-          return rowValue !== undefined
-            ? String(rowValue)
-              .toLowerCase()
-              .startsWith(String(filterValue).toLowerCase())
-            : true
-        })
-      },
-    }),
-    []
-  );
+  const options = useDataTableContext();
 
-  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, preGlobalFilteredRows} = useTable(
-    {columns, data, defaultColumn, filterTypes},
+  useEffect(() => console.log(options), [options]);
+
+  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} = useTable(
+    {columns, data, defaultColumn, filterTypes: options.filterTypes},
     useResizeColumns,
     useFlexLayout,
     useFilters,
@@ -52,13 +36,11 @@ const DataTable = ({ data, columns }) => {
       prepareRow(row);
       return (
         <div {...row.getRowProps({style})} className="tr">
-          {row.cells.map(cell => {
-            return (
-              <div {...cell.getCellProps(flexCellProps)} className="td">
-                {cell.render('Cell')}
-              </div>
-            )
-          })}
+          {row.cells.map(cell => (
+            <div {...cell.getCellProps(flexCellProps)} className="td">
+              {cell.render('Cell')}
+            </div>
+          ))}
         </div>
       );
     },
@@ -85,11 +67,9 @@ const DataTable = ({ data, columns }) => {
           {headerGroups.map((headerGroup, i) => (
             <React.Fragment key={`filter-group${i}`}>
               {headerGroup.headers.reduce((filters, column, j) => {
-                console.log(column)
                 if (column.canFilter) {
                   filters.push(
                     <div key={`filter${column.accessor}${j}`}>
-                      {console.log(column.render('Filter'))}
                       {column.render('Filter')}
                     </div>
                   );

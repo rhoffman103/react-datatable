@@ -2,6 +2,8 @@ import React, {useEffect, useMemo, useState} from "react";
 import DataTable from "./DataTable";
 import SelectColumnFilter from "./DataTable/Filter/SelectColumnFilter";
 import InputColumnFilter from "./DataTable/Filter/InputColumnFilter";
+import DataTableProvider from "./DataTable/DataTableProvider";
+import {fuzzyTextFilterFn} from "./DataTable/Filter/utils";
 
 function App() {
   const [data, setData] = useState([]);
@@ -28,9 +30,28 @@ function App() {
       width: 75,
       minWidth: 75,
       Filter: InputColumnFilter,
-      filter: "contains"
+      filter: "fuzzyText"
     }
   ], []);
+
+  const options = React.useMemo(() => ({
+    filterTypes: {
+      // Add a new fuzzyTextFilterFn filter type.
+      fuzzyText: fuzzyTextFilterFn,
+      // Or, override the default text filter to use
+      // "startWith"
+      text: (rows, id, filterValue) => {
+        return rows.filter(row => {
+          const rowValue = row.values[id]
+          return rowValue !== undefined
+            ? String(rowValue)
+              .toLowerCase()
+              .startsWith(String(filterValue).toLowerCase())
+            : true
+        })
+      }
+    }
+  }), []);
 
   useEffect(() => {
     fetch("https://fakerapi.it/api/v1/credit_cards?_quantity=1000")
@@ -46,11 +67,10 @@ function App() {
 
   return (
     <div className="App">
-      <div style={{
-        height: "75vh",
-        width: "100%",
-      }}>
-        <DataTable data={data} columns={columns}/>
+      <div style={{ height: "75vh", width: "100%",}}>
+        <DataTableProvider options={options}>
+          <DataTable data={data} columns={columns}/>
+        </DataTableProvider>
       </div>
     </div>
   );
