@@ -1,5 +1,6 @@
 import React from 'react';
-import {useFlexLayout, useResizeColumns, useTable, useSortBy, useFilters} from "react-table";
+import PropTypes from "prop-types";
+import {useFlexLayout, useResizeColumns, useTable, useSortBy, useFilters, useGlobalFilter} from "react-table";
 import {FixedSizeList} from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import scrollbarWidth from "../Util/scrollbarWidth";
@@ -7,8 +8,10 @@ import {flexHeaderProps, flexCellProps} from "../Util/getStyles";
 import InputColumnFilter from "./Filter/InputColumnFilter";
 import {useDataTableContext} from "./DataTableContext";
 import {fuzzyTextFilterFn} from "./Filter/utils";
+import GlobalFilter from "./Filter/GlobalFilter";
+import {ColumnsPropTypes, InitialStateProps} from "./DataTablePropTypes";
 
-const DataTable = ({ data, columns }) => {
+const DataTable = ({ data, columns, initialState }) => {
   const headerRef = React.useRef();
   const toolbarRef = React.useRef();
   const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
@@ -25,12 +28,14 @@ const DataTable = ({ data, columns }) => {
     ...filterTypes
   }), [filterTypes]);
 
-  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} = useTable(
-    {columns, data, defaultColumn, filterTypes, ...options},
+  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, preGlobalFilteredRows, setGlobalFilter, state, ...rest} = useTable(
+    {columns, data, defaultColumn, filterTypes, initialState, ...options},
     useResizeColumns,
     useFlexLayout,
+    useGlobalFilter,
     useFilters,
-    useSortBy
+    useSortBy,
+    // (args) => console.log("hook", args)
   );
 
   const minTableWidth = React.useMemo(() => parseInt(getTableProps().style.minWidth.replace("px", "")), [getTableProps]);
@@ -68,21 +73,25 @@ const DataTable = ({ data, columns }) => {
 
       <div className="table-toolbar" ref={toolbarRef}>
 
+        <div className="table-search">
+          <GlobalFilter
+            preGlobalFilteredRows={preGlobalFilteredRows}
+            globalFilter={state.globalFilter}
+            setGlobalFilter={setGlobalFilter}
+          />
+        </div>
+
         <div className="table-filters">
-          {headerGroups.map((headerGroup, i) => (
-            <React.Fragment key={`filter-group${i}`}>
-              {headerGroup.headers.reduce((filters, column, j) => {
-                if (column.canFilter) {
-                  filters.push(
-                    <div key={`filter${column.accessor}${j}`}>
-                      {column.render('Filter')}
-                    </div>
-                  );
-                }
-                return filters;
-              }, [])}
-            </React.Fragment>
-          ))}
+          {rest.allColumns.reduce((filters, column, j) => {
+            if (column.canFilter) {
+              filters.push(
+                <div key={`filter${column.accessor}${j}`}>
+                  {column.render('Filter')}
+                </div>
+              );
+            }
+            return filters;
+          }, [])}
         </div>
       </div>
 
@@ -127,6 +136,16 @@ const DataTable = ({ data, columns }) => {
       </AutoSizer>
     </div>
   );
+};
+
+DataTable.propTypes = {
+  data: PropTypes.array.isRequired,
+  columns: ColumnsPropTypes.isRequired,
+  initialState: InitialStateProps
+};
+
+DataTable.defaultProps = {
+  initialState: {}
 };
 
 export default DataTable;

@@ -3,6 +3,7 @@ import DataTable from "./DataTable";
 import SelectColumnFilter from "./DataTable/Filter/SelectColumnFilter";
 import InputColumnFilter from "./DataTable/Filter/InputColumnFilter";
 import DataTableProvider from "./DataTable/DataTableProvider";
+import MultiChipColumnFilter from "./DataTable/Filter/MultiChipColumnFilter";
 
 function App() {
   const [data, setData] = useState([]);
@@ -30,8 +31,21 @@ function App() {
       minWidth: 75,
       Filter: InputColumnFilter,
       filter: "fuzzyText"
+    },
+    {
+      accessor: "tags",
+      Header: "Tags",
+      width: 75,
+      minWidth: 75,
+      Filter: MultiChipColumnFilter,
+      filter: "includesSome",
+      filterOptions: ["even", "odd", "fifth"]
     }
   ], []);
+
+  const initialState = {
+    hiddenColumns: ["tags"]
+  };
 
   const options = React.useMemo(() => ({
     filterTypes: {
@@ -57,16 +71,24 @@ function App() {
         return Promise.reject(response);
       })
       .then((json) => {
-        setData(json.data);
+        const dataSet = []
+        for (let i = 0; i < json.data.length; i++) {
+          let tags = i % 2 === 0 ? ["even"] : ["odd"];
+          dataSet.push({
+            ...json.data[i],
+            tags: i % 5 === 0 ? [...tags, "fifth"] : tags
+          });
+        }
+        setData(dataSet);
       })
       .catch(console.error);
   }, []);
 
   return (
     <div className="App">
-      <div style={{ height: "75vh", width: "100%",}}>
+      <div style={{ height: "75vh", width: "100%" }}>
         <DataTableProvider options={options}>
-          <DataTable data={data} columns={columns}/>
+          <DataTable data={data} columns={columns} initialState={initialState} />
         </DataTableProvider>
       </div>
     </div>

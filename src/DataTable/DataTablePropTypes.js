@@ -14,7 +14,24 @@ export const ColumnPropTypes = PropTypes.shape({
 
   /** custom props for data-table options */
   Filter: PropTypes.func,
-  filter: PropTypes.string
+  filter: PropTypes.oneOfType([
+    /** @SEE default filterTypes https://github.com/tannerlinsley/react-table/blob/master/src/filterTypes.js */
+    PropTypes.oneOf(["text", "exactText", "exactTextCase", "includes", "includesAll", "includesSome", "includesValue", "exact", "equals", "between"]),
+    PropTypes.string // used if custom filterType is added in DataTableProvider options
+  ])
+});
+
+export const InitialStateProps = PropTypes.shape({
+  hiddenColumns: PropTypes.arrayOf(PropTypes.string),
+  globalFilter: PropTypes.string,
+  filters: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string, // columnId
+    value: PropTypes.string
+  })),
+  sortBy: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string, // columnId
+    desc: PropTypes.bool
+  }))
 });
 
 export const ColumnsPropTypes = PropTypes.arrayOf(ColumnPropTypes);
