@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useFlexLayout, useResizeColumns, useTable, useSortBy, useFilters} from "react-table";
 import {FixedSizeList} from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -6,6 +6,7 @@ import scrollbarWidth from "../Util/scrollbarWidth";
 import {flexHeaderProps, flexCellProps} from "../Util/getStyles";
 import InputColumnFilter from "./Filter/InputColumnFilter";
 import {useDataTableContext} from "./DataTableContext";
+import {fuzzyTextFilterFn} from "./Filter/utils";
 
 const DataTable = ({ data, columns }) => {
   const headerRef = React.useRef();
@@ -16,12 +17,16 @@ const DataTable = ({ data, columns }) => {
     Filter: InputColumnFilter,
   }), []);
 
-  const options = useDataTableContext();
+  let { filterTypes, ...options } = useDataTableContext();
 
-  useEffect(() => console.log(options), [options]);
+  filterTypes = React.useMemo(() => ({
+    // Add a new fuzzyTextFilterFn filter type.
+    fuzzyText: fuzzyTextFilterFn,
+    ...filterTypes
+  }), [filterTypes]);
 
   const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} = useTable(
-    {columns, data, defaultColumn, filterTypes: options.filterTypes},
+    {columns, data, defaultColumn, filterTypes, ...options},
     useResizeColumns,
     useFlexLayout,
     useFilters,

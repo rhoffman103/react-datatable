@@ -3,7 +3,6 @@ import DataTable from "./DataTable";
 import SelectColumnFilter from "./DataTable/Filter/SelectColumnFilter";
 import InputColumnFilter from "./DataTable/Filter/InputColumnFilter";
 import DataTableProvider from "./DataTable/DataTableProvider";
-import {fuzzyTextFilterFn} from "./DataTable/Filter/utils";
 
 function App() {
   const [data, setData] = useState([]);
@@ -36,9 +35,7 @@ function App() {
 
   const options = React.useMemo(() => ({
     filterTypes: {
-      // Add a new fuzzyTextFilterFn filter type.
-      fuzzyText: fuzzyTextFilterFn,
-      // Or, override the default text filter to use
+      // override the default text filter to use
       // "startWith"
       text: (rows, id, filterValue) => {
         return rows.filter(row => {

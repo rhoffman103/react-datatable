@@ -9,7 +9,12 @@ const DataTableProvider = ({ children, options }) => (
 );
 
 DataTableProvider.propTypes = {
+  /** @SEE useFilters https://react-table.tanstack.com/docs/api/useFilters#table-options */
   filterTypes: PropTypes.object, //Object<filterKey: filterType>
+  manualFilters: PropTypes.bool,
+  disableFilters: PropTypes.bool,
+  defaultCanFilter: PropTypes.bool,
+  autoResetFilters: PropTypes.bool
 };
 
 DataTableProvider.defaultProps = {
