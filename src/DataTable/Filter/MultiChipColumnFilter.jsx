@@ -1,18 +1,9 @@
 import React, {useMemo} from "react";
 import {ColumnFilterProps} from "./FilterPropTypes";
+import {getMultiFilterOptions} from "./utils";
 
 const MultiChipColumnFilter = ({column: { filterValue = [], preFilteredRows, setFilter, id, filterOptions }}) => {
-  const options = useMemo(() => {
-    const options = new Set();
-    if (filterOptions) {
-      filterOptions.forEach((option) => options.add(option))
-    } else {
-      preFilteredRows.forEach(row => {
-        options.add(row.values[id]);
-      });
-    }
-    return [...options.values()];
-  }, [id, filterOptions, preFilteredRows]);
+  const options = useMemo(() => getMultiFilterOptions(id, filterOptions, preFilteredRows), [id, filterOptions, preFilteredRows]);
 
   const handleSelect = ({ target: { value } }) => {
     if (filterValue.indexOf(value) !== -1) {

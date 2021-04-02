@@ -4,6 +4,7 @@ import SelectColumnFilter from "./DataTable/Filter/SelectColumnFilter";
 import InputColumnFilter from "./DataTable/Filter/InputColumnFilter";
 import DataTableProvider from "./DataTable/DataTableProvider";
 import MultiChipColumnFilter from "./DataTable/Filter/MultiChipColumnFilter";
+import MultiSelectColumnFilter from "./DataTable/Filter/MultiSelectColumnFilter";
 
 function App() {
   const [data, setData] = useState([]);
@@ -39,7 +40,16 @@ function App() {
       minWidth: 75,
       Filter: MultiChipColumnFilter,
       filter: "includesSome",
-      filterOptions: ["even", "odd", "fifth"]
+      filterOptions: ["even", "odd"]
+    },
+    {
+      accessor: "others",
+      Header: "Others",
+      width: 75,
+      minWidth: 75,
+      Filter: MultiSelectColumnFilter,
+      filter: "includesSome",
+      filterOptions: ["fifth", "not fifth"]
     }
   ], []);
 
@@ -74,10 +84,8 @@ function App() {
         const dataSet = []
         for (let i = 0; i < json.data.length; i++) {
           let tags = i % 2 === 0 ? ["even"] : ["odd"];
-          dataSet.push({
-            ...json.data[i],
-            tags: i % 5 === 0 ? [...tags, "fifth"] : tags
-          });
+          let others = i % 5 === 0 ? ["fifth"] : ["not fifth"]
+          dataSet.push({...json.data[i], tags, others});
         }
         setData(dataSet);
       })
