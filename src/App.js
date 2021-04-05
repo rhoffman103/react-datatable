@@ -95,10 +95,10 @@ function App() {
         return Promise.reject(response);
       })
       .then((json) => {
-        const dataSet = []
+        const dataSet = [];
         for (let i = 0; i < json.data.length; i++) {
           let tags = i % 2 === 0 ? ["even"] : ["odd"];
-          let others = i % 5 === 0 ? ["fifth"] : ["not fifth"]
+          let others = i % 5 === 0 ? ["fifth"] : ["not fifth"];
           dataSet.push({...json.data[i], tags, others});
         }
         setData(dataSet);

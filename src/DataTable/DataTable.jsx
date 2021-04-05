@@ -10,17 +10,21 @@ import {useDataTableContext} from "./DataTableContext";
 import {fuzzyTextFilterFn} from "./Filter/utils";
 import GlobalFilter from "./Filter/GlobalFilter";
 import {ColumnsPropTypes, InitialStateProps} from "./DataTablePropTypes";
+import DefaultFooter from "./DefaultFooter";
 
 const DataTable = ({ data, columns, initialState }) => {
+  const listRef = React.useRef();
+  const innerListRef = React.useRef();
   const headerRef = React.useRef();
   const toolbarRef = React.useRef();
+  const footerRef = React.useRef();
   const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
   const defaultColumn = React.useMemo(() => ({
     minWidth: 30, width: 150, maxWidth: 200,
     Filter: InputColumnFilter,
   }), []);
 
-  let { filterTypes, ...options } = useDataTableContext();
+  let { filterTypes, footer, Footer, ...options } = useDataTableContext();
 
   filterTypes = React.useMemo(() => ({
     // Add a new fuzzyTextFilterFn filter type.
@@ -28,7 +32,7 @@ const DataTable = ({ data, columns, initialState }) => {
     ...filterTypes
   }), [filterTypes]);
 
-  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, preGlobalFilteredRows, setGlobalFilter, state, ...rest} = useTable(
+  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, preGlobalFilteredRows, setGlobalFilter, state, filteredRows, ...rest} = useTable(
     {columns, data, defaultColumn, filterTypes, initialState, ...options},
     useResizeColumns,
     useFlexLayout,
@@ -65,15 +69,23 @@ const DataTable = ({ data, columns, initialState }) => {
   const computeHeight = React.useCallback((containerHeight) => {
     const hHeight = headerRef.current ? headerRef.current.clientHeight : 0;
     const tHeight = toolbarRef.current ? toolbarRef.current.clientHeight : 0;
-    return containerHeight - scrollBarSize - hHeight - tHeight;
+    const fHeight = footerRef.current ? footerRef.current.clientHeight : 0;
+    return containerHeight - scrollBarSize - hHeight - tHeight - fHeight;
   }, [scrollBarSize, headerRef]);
 
+  const FooterComponent = Footer ? Footer : DefaultFooter;
+
+  const footerProps = React.useMemo(() => ({
+    visibleItems: innerListRef.current ? innerListRef.current.childElementCount : 0,
+    totalItems: filteredRows.length
+  }), [filteredRows]);
+
   return (
-    <div className="table-wrapper w-100 h-100 p-1">
+    <div className="dt-wrapper w-100 h-100 p-1">
 
-      <div className="table-toolbar" ref={toolbarRef}>
+      <div className="dt-toolbar" ref={toolbarRef}>
 
-        <div className="table-search">
+        <div className="dt-search">
           <GlobalFilter
             preGlobalFilteredRows={preGlobalFilteredRows}
             globalFilter={state.globalFilter}
@@ -81,7 +93,7 @@ const DataTable = ({ data, columns, initialState }) => {
           />
         </div>
 
-        <div className="table-filters">
+        <div className="dt-filters">
           {rest.allColumns.reduce((filters, column, j) => {
             if (column.canFilter) {
               filters.push(
@@ -98,40 +110,48 @@ const DataTable = ({ data, columns, initialState }) => {
       <AutoSizer>
         {({ width, height }) => {
           width = computeWidth(width);
+          height = computeHeight(height);
 
           return (
-            <div {...getTableProps()} className="table" style={{ width }}>
+            <>
+              <div {...getTableProps()} className="table" style={{ width }}>
 
-              <div className="thead" style={{ width: width - scrollBarSize + "px" }} ref={headerRef}>
-                {headerGroups.map(headerGroup => (
-                  <div {...headerGroup.getHeaderGroupProps()} className="tr" >
-                    {headerGroup.headers.map(column => (
-                      <div {...column.getHeaderProps(flexHeaderProps)} {...column.getHeaderProps(column.getSortByToggleProps())} className="th">
-                        {column.render('Header')}
-                        <span className="ml-auto">
-                          {column.isSorted
-                            ? column.isSortedDesc
-                              ? <>&#9650;</>
-                              : <>&#9660;</>
-                            : <></>}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                <div className="thead" style={{ width: width - (filteredRows.length * 35 > height ? scrollBarSize : 0) + "px" }} ref={headerRef}>
+                  {headerGroups.map(headerGroup => (
+                    <div {...headerGroup.getHeaderGroupProps()} className="tr" >
+                      {headerGroup.headers.map(column => (
+                        <div {...column.getHeaderProps(flexHeaderProps)} {...column.getHeaderProps(column.getSortByToggleProps())} className="th">
+                          {column.render('Header')}
+                          <span className="ml-auto">
+                            {column.isSorted
+                              ? column.isSortedDesc
+                                ? <>&#9650;</>
+                                : <>&#9660;</>
+                              : <></>}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+
+                <div {...getTableBodyProps()}>
+                  <FixedSizeList
+                    ref={listRef}
+                    innerRef={innerListRef}
+                    height={height}
+                    itemCount={rows.length}
+                    itemSize={35}
+                    width={width}
+                  >
+                    {RenderRow}
+                  </FixedSizeList>
+                </div>
               </div>
 
-              <div {...getTableBodyProps()}>
-                <FixedSizeList
-                  height={computeHeight(height)}
-                  itemCount={rows.length}
-                  itemSize={35}
-                  width={width}
-                >
-                  {RenderRow}
-                </FixedSizeList>
-              </div>
-            </div>
+              {footer && <FooterComponent ref={footerRef} {...footerProps} style={{ width }} />}
+
+            </>
           )}}
       </AutoSizer>
     </div>

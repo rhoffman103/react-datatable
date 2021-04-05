@@ -1,7 +1,8 @@
 import {createContext, useContext} from "react";
 
 export const initialDataTableState = {
-  filterTypes: {}
+  filterTypes: {},
+  footer: true,
 };
 
 const DataTableContext = createContext(initialDataTableState);

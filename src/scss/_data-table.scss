@@ -1,18 +1,19 @@
-.table-wrapper {
+.dt-wrapper {
   /* These styles are suggested for the table fill all available space in its containing element */
   display: block;
   /* These styles are required for a horizontally scrollable table overflow */
   overflow-x: auto;
   overflow-y: hidden;
+  position: relative;
 }
 
-.table-toolbar {
+.dt-toolbar {
   width: 100%;
 }
 
 .table {
   border-spacing: 0;
-  border: 1px solid black;
+  //border: 1px solid black;
 
   .thead {
     /* These styles are required for a scrollable body to align with the header properly */
@@ -44,7 +45,7 @@
   .td {
     margin: 0;
     padding: 0.5rem;
-    border-right: 1px solid black;
+    //border-right: 1px solid black;
 
     /* In this example we use an absolutely position resizer, so this is required. */
     position: relative;
@@ -71,9 +72,13 @@
   }
 }
 
-.table-filters {
+.dt-filters {
   .active-chip {
     color: white;
     background-color: darkgray;
   }
+}
+
+.dt-footer {
+  width: 100%;
 }

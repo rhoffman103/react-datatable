@@ -21,6 +21,7 @@ const InputColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter, 
         value={value || ""}
         onChange={handleInputChange}
         placeholder={`Search ${preFilteredRows.length} records...`}
+        autoComplete="off"
       />
     </div>
   );
