@@ -1,9 +1,12 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import {useAsyncDebounce} from "react-table";
+import FocusTrap from "focus-trap-react";
 import {ColumnFilterProps} from "./FilterPropTypes";
 import {getMultiFilterOptions} from "./utils";
 import DTDropdown from "../../DTDropdown";
 
 const MultiSelectInputFilter = ({column: { filterValue = [], preFilteredRows, setFilter, id, filterOptions = null, ...cols }}) => {
+  const inputRef = useRef();
   const [input, setInput] = useState("");
   const options = useMemo(() => getMultiFilterOptions(id, filterOptions, preFilteredRows), [id, filterOptions, preFilteredRows]);
 
@@ -18,7 +21,7 @@ const MultiSelectInputFilter = ({column: { filterValue = [], preFilteredRows, se
     }
   };
 
-  const handleInputChange = ({target: {value}}) => {
+  const handleInputChange = useAsyncDebounce(({ target: { value } }) => {
     let filters = [...filterValue];
     if (filters.length) {
         const index = filters.indexOf(input);
@@ -39,23 +42,32 @@ const MultiSelectInputFilter = ({column: { filterValue = [], preFilteredRows, se
 
     setFilter(filters);
     setInput(value);
-  };
+  }, 200);
+
+  useEffect(() => {
+    if (!filterValue.length && inputRef.current) {
+      inputRef.current.value = "";
+    }
+  }, [filterValue]);
 
   return (
     <DTDropdown title={cols.Header}>
-      <form>
-        <input
-          value={input}
-          onChange={handleInputChange}
-          placeholder={`Search ${preFilteredRows.length} records...`}
-        />
-        {options.map((option, i) => (
-          <div key={i}>
-            <input type="checkbox" id={cols.Header + option + i} value={option} checked={filterValue.includes(option)} onChange={handleSelect} />
-            <label htmlFor={cols.Header + option + i}>{option}</label>
-          </div>
-        ))}
-      </form>
+      <FocusTrap focusTrapOptions={{ clickOutsideDeactivates: true }}>
+        <form className="filter-multi-input">
+          <input
+            ref={inputRef}
+            tabIndex={0}
+            onInput={handleInputChange}
+            placeholder={`Search ${preFilteredRows.length} records...`}
+          />
+          {options.map((option, i) => (
+            <div key={i}>
+              <input type="checkbox" id={cols.Header + option + i} value={option} checked={filterValue.includes(option)} onChange={handleSelect} />
+              <label htmlFor={cols.Header + option + i}>{option}</label>
+            </div>
+          ))}
+        </form>
+      </FocusTrap>
     </DTDropdown>
   );
 };

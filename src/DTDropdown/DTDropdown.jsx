@@ -32,7 +32,7 @@ const DTDropdown = ({ title, modifiers, children }) => {
       return;
     }
     setVisibility(false);
-  }
+  };
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
@@ -43,7 +43,7 @@ const DTDropdown = ({ title, modifiers, children }) => {
 
   return (
     <>
-      <button className="dropdown-trigger" ref={triggerRef} onClick={handleClick}>
+      <button className="dropdown-trigger" ref={triggerRef} onClick={handleClick} data-state={isVisible}>
         {title}
       </button>
 

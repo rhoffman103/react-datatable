@@ -1,15 +1,28 @@
 import React from "react";
 import {ColumnFilterProps} from "./FilterPropTypes";
+import {useAsyncDebounce} from "react-table";
 
-const InputColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }) => {
+const InputColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter, Header } }) => {
+  const [value, setValue] = React.useState(filterValue)
+  const onChange = useAsyncDebounce(value => {
+    setFilter(value || undefined);
+  }, 200);
+
+  const handleInputChange = React.useCallback((e) => {
+    setValue(e.target.value);
+    onChange(e.target.value);
+  }, [onChange]);
 
   return (
-    <input
-      value={filterValue || ''}
-      // Set undefined to remove the filter entirely
-      onChange={e => setFilter(e.target.value || undefined)}
-      placeholder={`Search ${preFilteredRows.length} records...`}
-    />
+    <div className="filter-input">
+      <label htmlFor={"filter" + Header}>{Header}</label>
+      <input
+        id={"filter" + Header}
+        value={value || ""}
+        onChange={handleInputChange}
+        placeholder={`Search ${preFilteredRows.length} records...`}
+      />
+    </div>
   );
 };
 
