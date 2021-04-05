@@ -1,10 +1,10 @@
 import React, {useEffect, useMemo, useState} from "react";
 import DataTable from "./DataTable";
-import SelectColumnFilter from "./DataTable/Filter/SelectColumnFilter";
 import InputColumnFilter from "./DataTable/Filter/InputColumnFilter";
 import DataTableProvider from "./DataTable/DataTableProvider";
 import MultiChipColumnFilter from "./DataTable/Filter/MultiChipColumnFilter";
 import MultiSelectColumnFilter from "./DataTable/Filter/MultiSelectColumnFilter";
+import MultiSelectInputFilter from "./DataTable/Filter/MultiSelectInputFilter";
 
 function App() {
   const [data, setData] = useState([]);
@@ -15,8 +15,8 @@ function App() {
       Header: "Type",
       width: 150,
       minWidth: 150,
-      Filter: SelectColumnFilter,
-      filter: "includes"
+      Filter: MultiSelectInputFilter,
+      filter: "includesSome_ci"
     },
     {
       accessor: "number",
@@ -70,7 +70,21 @@ function App() {
               .startsWith(String(filterValue).toLowerCase())
             : true
         })
-      }
+      },
+      includesSome_ci: (rows, ids, filterValue) => {
+        return rows.filter(row => {
+          return ids.some(id => {
+            const rowValue = row.values[id]
+            return (
+              rowValue &&
+              rowValue.length &&
+              filterValue.some(val => rowValue.match((new RegExp(val, "gi"))))
+            )
+          })
+        })
+      },
+
+      // includesSome.autoRemove = val => !val || !val.length
     }
   }), []);
 
