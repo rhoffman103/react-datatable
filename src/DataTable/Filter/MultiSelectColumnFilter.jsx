@@ -1,6 +1,6 @@
-import React, {useMemo, useState} from 'react';
-import Dropdown from "react-bootstrap/Dropdown";
-import FormCheck from "react-bootstrap/FormCheck";
+import React, {useMemo} from 'react';
+import DTDropdown from "../../DTDropdown";
+import { ColumnFilterProps } from './FilterPropTypes';
 import {getMultiFilterOptions} from "./utils";
 
 const MultiSelectColumnFilter = ({column: { filterValue = [], preFilteredRows, setFilter, id, filterOptions = null, ...cols }, ...rest}) => {
@@ -14,31 +14,22 @@ const MultiSelectColumnFilter = ({column: { filterValue = [], preFilteredRows, s
     }
   };
 
-  console.log({cols, rest})
-
   return (
-    <Dropdown>
-      <Dropdown.Toggle variant="" id="dropdown-basic">
-        {cols.Header}
-      </Dropdown.Toggle>
-
-      <Dropdown.Menu>
-        <form>
-          {options.map((option, i) => (
-            <Dropdown.Item key={i}>
-              <FormCheck
-                inline
-                label={option}
-                type="checkbox"
-                checked={filterValue.includes(option)}
-                onChange={console.log}
-              />
-            </Dropdown.Item>
-          ))}
-        </form>
-      </Dropdown.Menu>
-    </Dropdown>
+    <DTDropdown title={cols.Header}>
+      <form>
+        {options.map((option, i) => (
+          <div key={i}>
+            <input type="checkbox" id={cols.Header + option + i} value={option} checked={filterValue.includes(option)} onChange={handleSelect} />
+            <label htmlFor={cols.Header + option + i}>{option}</label>
+          </div>
+        ))}
+      </form>
+    </DTDropdown>
   );
+};
+
+MultiSelectColumnFilter.propTypes = {
+  column: ColumnFilterProps.isRequired
 };
 
 export default MultiSelectColumnFilter;

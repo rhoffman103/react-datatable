@@ -54,7 +54,7 @@ function App() {
   ], []);
 
   const initialState = {
-    hiddenColumns: ["tags"]
+    hiddenColumns: ["tags", "others"]
   };
 
   const options = React.useMemo(() => ({
