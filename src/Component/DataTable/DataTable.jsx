@@ -3,12 +3,12 @@ import PropTypes from "prop-types";
 import {useFlexLayout, useResizeColumns, useTable, useSortBy, useFilters, useGlobalFilter} from "react-table";
 import {FixedSizeList} from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-import scrollbarWidth from "../Util/scrollbarWidth";
-import {flexHeaderProps, flexCellProps} from "../Util/getStyles";
-import InputColumnFilter from "./Filter/InputColumnFilter";
+import scrollbarWidth from "../../Util/scrollbarWidth";
+import {flexHeaderProps, flexCellProps} from "../../Util/getStyles";
+import InputColumnFilter from "../Filter/InputColumnFilter";
 import {useDataTableContext} from "./DataTableContext";
-import {fuzzyTextFilterFn} from "./Filter/utils";
-import GlobalFilter from "./Filter/GlobalFilter";
+import {fuzzyTextFilterFn} from "../Filter/utils";
+import GlobalFilter from "../Filter/GlobalFilter";
 import {ColumnsPropTypes, InitialStateProps} from "./DataTablePropTypes";
 import DefaultFooter from "./DefaultFooter";
 

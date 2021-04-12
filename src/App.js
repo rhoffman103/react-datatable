@@ -1,10 +1,10 @@
 import React, {useEffect, useMemo, useState} from "react";
-import DataTable from "./DataTable";
-import InputColumnFilter from "./DataTable/Filter/InputColumnFilter";
-import DataTableProvider from "./DataTable/DataTableProvider";
-import MultiChipColumnFilter from "./DataTable/Filter/MultiChipColumnFilter";
-import MultiSelectColumnFilter from "./DataTable/Filter/MultiSelectColumnFilter";
-import MultiSelectInputFilter from "./DataTable/Filter/MultiSelectInputFilter";
+import DataTable from "./Component/DataTable";
+import DataTableProvider from "./Component/DataTable/DataTableProvider";
+import InputColumnFilter from "./Component/Filter/InputColumnFilter";
+import MultiChipColumnFilter from "./Component/Filter/MultiChipColumnFilter";
+import MultiSelectColumnFilter from "./Component/Filter/MultiSelectColumnFilter";
+import ChecklistInputFilter from "./Component/Filter/ChecklistInputFilter";
 
 function App() {
   const [data, setData] = useState([]);
@@ -15,8 +15,9 @@ function App() {
       Header: "Type",
       width: 150,
       minWidth: 150,
-      Filter: MultiSelectInputFilter,
-      filter: "includesSome_ci"
+      Filter: ChecklistInputFilter,
+      filter: "includesSome",
+      filterListType: "radio"
     },
     {
       accessor: "number",

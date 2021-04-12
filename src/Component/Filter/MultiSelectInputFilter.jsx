@@ -3,7 +3,7 @@ import {useAsyncDebounce} from "react-table";
 import FocusTrap from "focus-trap-react";
 import {ColumnFilterProps} from "./FilterPropTypes";
 import {getMultiFilterOptions} from "./utils";
-import DTDropdown from "../../DTDropdown";
+import DTDropdown from "../DTDropdown";
 
 const MultiSelectInputFilter = ({column: { filterValue = [], preFilteredRows, setFilter, id, filterOptions = null, ...cols }}) => {
   const inputRef = useRef();

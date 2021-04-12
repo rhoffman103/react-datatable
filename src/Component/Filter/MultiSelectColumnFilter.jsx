@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import DTDropdown from "../../DTDropdown";
+import DTDropdown from "../DTDropdown";
 import { ColumnFilterProps } from './FilterPropTypes';
 import {getMultiFilterOptions} from "./utils";
 
