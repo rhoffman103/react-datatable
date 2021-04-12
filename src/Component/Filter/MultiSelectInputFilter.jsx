@@ -5,13 +5,13 @@ import {ColumnFilterProps} from "./FilterPropTypes";
 import {getMultiFilterOptions} from "./utils";
 import DTDropdown from "../DTDropdown";
 
-const MultiSelectInputFilter = ({column: { filterValue = [], preFilteredRows, setFilter, id, filterOptions = null, ...cols }}) => {
+const MultiSelectInputFilter = ({column: { filterValue, preFilteredRows, setFilter, id, filterOptions = null, ...cols }}) => {
   const inputRef = useRef();
   const [input, setInput] = useState("");
   const options = useMemo(() => getMultiFilterOptions(id, filterOptions, preFilteredRows), [id, filterOptions, preFilteredRows]);
 
   const handleSelect = ({ target: { value } }) => {
-    if (filterValue.indexOf(value) !== -1) {
+    if ((filterValue || []).indexOf(value) !== -1) {
       setFilter((prev) => {
         let filters = prev.filter((option) => option !== value);
         return filters.length ? filters : undefined
@@ -22,7 +22,7 @@ const MultiSelectInputFilter = ({column: { filterValue = [], preFilteredRows, se
   };
 
   const handleInputChange = useAsyncDebounce(({ target: { value } }) => {
-    let filters = [...filterValue];
+    let filters = Array.isArray(filterValue) ? [...filterValue] : [];
     if (filters.length) {
         const index = filters.indexOf(input);
         if (index !== -1) {
@@ -45,7 +45,7 @@ const MultiSelectInputFilter = ({column: { filterValue = [], preFilteredRows, se
   }, 200);
 
   useEffect(() => {
-    if (!filterValue.length && inputRef.current) {
+    if (!filterValue && inputRef.current) {
       inputRef.current.value = "";
     }
   }, [filterValue]);

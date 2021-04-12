@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {ColumnFilterProps} from "./FilterPropTypes";
 import {useAsyncDebounce} from "react-table";
 
@@ -12,6 +12,10 @@ const InputColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter, 
     setValue(e.target.value);
     onChange(e.target.value);
   }, [onChange]);
+
+  useEffect(() => {
+    if (filterValue === undefined) setValue("");
+  }, [filterValue]);
 
   return (
     <div className="filter-input">

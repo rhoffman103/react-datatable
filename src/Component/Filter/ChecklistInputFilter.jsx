@@ -33,7 +33,7 @@ const ChecklistInputFilter = ({column: { filterValue = [], preFilteredRows, setF
   return (
     <DTDropdown title={cols.Header}>
       <FocusTrap focusTrapOptions={{ clickOutsideDeactivates: true }}>
-        <form className="filter-multi-input">
+        <form className="filter-multi-input" onSubmit={(e) => e.preventDefault()}>
           <input
             ref={inputRef}
             tabIndex={0}

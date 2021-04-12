@@ -24,7 +24,7 @@ const DataTable = ({ data, columns, initialState }) => {
     Filter: InputColumnFilter,
   }), []);
 
-  let { filterTypes, footer, Footer, ...options } = useDataTableContext();
+  let { filterTypes, footer, Footer, ...contextOptions } = useDataTableContext();
 
   filterTypes = React.useMemo(() => ({
     // Add a new fuzzyTextFilterFn filter type.
@@ -32,8 +32,8 @@ const DataTable = ({ data, columns, initialState }) => {
     ...filterTypes
   }), [filterTypes]);
 
-  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, preGlobalFilteredRows, setGlobalFilter, state, filteredRows, ...rest} = useTable(
-    {columns, data, defaultColumn, filterTypes, initialState, ...options},
+  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, preGlobalFilteredRows, setGlobalFilter, state, filteredRows, setAllFilters, ...rest} = useTable(
+    {columns, data, defaultColumn, filterTypes, initialState, ...contextOptions},
     useResizeColumns,
     useFlexLayout,
     useGlobalFilter,
@@ -93,18 +93,27 @@ const DataTable = ({ data, columns, initialState }) => {
           />
         </div>
 
-        <div className="dt-filters">
-          {rest.allColumns.reduce((filters, column, j) => {
-            if (column.canFilter) {
-              filters.push(
-                <div key={`filter${column.accessor}${j}`}>
-                  {column.render('Filter')}
-                </div>
-              );
-            }
-            return filters;
-          }, [])}
+        <div className="dt-filter-bar">
+
+          <div>
+            <button type="button" onClick={() => setAllFilters([])}>Reset Filters</button>
+          </div>
+
+          <div className="dt-filters">
+            {rest.allColumns.reduce((filters, column, j) => {
+              if (column.canFilter) {
+                filters.push(
+                  <div key={`filter${column.accessor}${j}`}>
+                    {column.render('Filter')}
+                  </div>
+                );
+              }
+              return filters;
+            }, [])}
+          </div>
+
         </div>
+
       </div>
 
       <AutoSizer>
@@ -161,7 +170,10 @@ const DataTable = ({ data, columns, initialState }) => {
 DataTable.propTypes = {
   data: PropTypes.array.isRequired,
   columns: ColumnsPropTypes.isRequired,
-  initialState: InitialStateProps
+  initialState: InitialStateProps,
+  options: PropTypes.shape({
+    
+  })
 };
 
 DataTable.defaultProps = {
