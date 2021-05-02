@@ -1,6 +1,9 @@
 .dt-wrapper {
   /* These styles are suggested for the table fill all available space in its containing element */
   display: block;
+  width: 100%;
+  height: 100%;
+
   /* These styles are required for a horizontally scrollable table overflow */
   overflow-x: auto;
   overflow-y: hidden;
@@ -22,6 +25,10 @@
 
     & .th {
       display: flex;
+    }
+
+    .sort-dir {
+      margin-left: auto;
     }
   }
 

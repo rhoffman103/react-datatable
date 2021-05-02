@@ -81,7 +81,7 @@ const DataTable = ({ data, columns, initialState }) => {
   }), [filteredRows]);
 
   return (
-    <div className="dt-wrapper w-100 h-100 p-1">
+    <div className="dt-wrapper">
 
       <div className="dt-toolbar" ref={toolbarRef}>
 
@@ -131,7 +131,7 @@ const DataTable = ({ data, columns, initialState }) => {
                       {headerGroup.headers.map(column => (
                         <div {...column.getHeaderProps(flexHeaderProps)} {...column.getHeaderProps(column.getSortByToggleProps())} className="th">
                           {column.render('Header')}
-                          <span className="ml-auto">
+                          <span className="sort-dir">
                             {column.isSorted
                               ? column.isSortedDesc
                                 ? <>&#9650;</>
