@@ -18,7 +18,7 @@ const InputColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter, 
   }, [filterValue]);
 
   return (
-    <div className="filter-input">
+    <div className="filter-input dt-input-group">
       <label htmlFor={"filter" + Header}>{Header}</label>
       <input
         id={"filter" + Header}

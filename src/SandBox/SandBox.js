@@ -9,7 +9,9 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 
 import DemoTable from "./DemoTable";
-import '../DataTable/scss/index.scss';
+import ContextDemo from "./ContextDemo";
+import "../DataTable/scss/index.scss";
+import "./styles.scss";
 
 const SandBox = () => {
 
@@ -22,12 +24,14 @@ const SandBox = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
             <Nav.Link as={Link} to="/demo">Demo Table</Nav.Link>
+            <Nav.Link as={Link} to="/context-demo">Context Demo</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
 
       <Switch>
         <Route path="/demo" exact component={DemoTable} />
+        <Route path="/context-demo" exact component={ContextDemo} />
       </Switch>
     </Router>
   );

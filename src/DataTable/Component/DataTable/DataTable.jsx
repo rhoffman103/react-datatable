@@ -94,11 +94,11 @@ const DataTable = ({ data, columns, initialState }) => {
         </div>
 
         <div className="dt-filter-bar">
-
+          
           <div>
-            <button type="button" onClick={() => setAllFilters([])}>Reset Filters</button>
+            <button className="dt-reset-filter-btn" type="button" onClick={() => setAllFilters([])}>Reset Filters</button>
           </div>
-
+          
           <div className="dt-filters">
             {rest.allColumns.reduce((filters, column, j) => {
               if (column.canFilter) {
