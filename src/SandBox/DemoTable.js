@@ -1,12 +1,12 @@
 import React, {useEffect, useMemo, useState} from "react";
-import DataTable from "./Component/DataTable";
-import DataTableProvider from "./Component/DataTable/DataTableProvider";
-import InputColumnFilter from "./Component/Filter/InputColumnFilter";
-import MultiChipColumnFilter from "./Component/Filter/MultiChipColumnFilter";
-import MultiSelectColumnFilter from "./Component/Filter/MultiSelectColumnFilter";
-import ChecklistInputFilter from "./Component/Filter/ChecklistInputFilter";
+import DataTable from "../DataTable/Component/DataTable";
+import DataTableProvider from "../DataTable/Component/DataTable/DataTableProvider";
+import InputColumnFilter from "../DataTable/Component/Filter/InputColumnFilter";
+import MultiChipColumnFilter from "../DataTable/Component/Filter/MultiChipColumnFilter";
+import MultiSelectColumnFilter from "../DataTable/Component/Filter/MultiSelectColumnFilter";
+import ChecklistInputFilter from "../DataTable/Component/Filter/ChecklistInputFilter";
 
-function App() {
+function DemoTable() {
   const [data, setData] = useState([]);
 
   const columns = useMemo(() => [
@@ -108,14 +108,13 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <div style={{ height: "75vh", width: "100%" }}>
-        <DataTableProvider options={options}>
-          <DataTable data={data} columns={columns} initialState={initialState} />
-        </DataTableProvider>
-      </div>
+    <div className="w-100 p-3" style={{ height: "75vh" }}>
+      <p>Demo table with default filters</p>
+      <DataTableProvider options={options}>
+        <DataTable data={data} columns={columns} initialState={initialState} />
+      </DataTableProvider>
     </div>
   );
 }
 
-export default App;
+export default DemoTable;
