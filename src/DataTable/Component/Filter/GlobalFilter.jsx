@@ -1,5 +1,6 @@
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import {useAsyncDebounce} from "react-table";
+import {nanoid} from "nanoid";
 
 const GlobalFilter = ({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) => {
   const count = preGlobalFilteredRows.length
@@ -13,10 +14,13 @@ const GlobalFilter = ({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) 
     onChange(e.target.value);
   }, [onChange]);
 
+  const inputId = useMemo(() => nanoid(), []);
+
   return (
-    <div>
-      <span>Search:</span>
+    <div className="dt-input-group">
+      <label htmlFor={inputId}>Search:</label>
       <input
+        id={inputId}
         value={value || ""}
         onChange={handleInputChange}
         placeholder={`${count} records...`}

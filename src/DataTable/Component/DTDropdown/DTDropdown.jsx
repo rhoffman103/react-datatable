@@ -44,7 +44,7 @@ const DTDropdown = ({ title, modifiers, children }) => {
   return (
     <>
       <button className="dropdown-trigger" ref={triggerRef} onClick={handleClick} data-state={isVisible}>
-        {title}
+        {title}<span>&#9660;</span>
       </button>
 
       <Portal>

@@ -45,7 +45,7 @@ const ChecklistInputFilter = ({column: { filterValue = [], preFilteredRows, setF
             if (option.match((new RegExp(input, "gi")))) {
               const name = cols.Header + option;
               acc.push(
-                <div key={i}>
+                <div key={i} className="checklist-filter">
                   <input value={option} type={filterListType} id={name + i} checked={filterValue.includes(option)} onChange={handleSelect} name={name} />
                   <label htmlFor={name + i}>{option}</label>
                 </div>
