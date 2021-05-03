@@ -23,7 +23,6 @@ DataTableProvider.propTypes = {
   /** Non React-Table props */
   footer: PropTypes.bool, // show/hide footer
   Footer: PropTypes.func, // (footerProps) => <JSX />
-  pagination: PropTypes.bool
 };
 
 DataTableProvider.defaultProps = {
