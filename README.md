@@ -8,6 +8,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 * [Demo](#Demo)
 * [Usage](#Usage)
 
+## Demo
+[codesandbox](https://codesandbox.io/s/react-datatable-pt7g8?file=/src/SandBox/DemoTable.js)
+
 ## Usage
 Be sure to follow documentation for the ```useTable``` hook from react-table. columns and data props must be memoized.
 
