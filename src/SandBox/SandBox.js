@@ -10,6 +10,7 @@ import Nav from "react-bootstrap/Nav";
 
 import DemoTable from "./DemoTable";
 import ContextDemo from "./ContextDemo";
+import "bootstrap/dist/css/bootstrap.css";
 import "../DataTable/scss/index.scss";
 import "./styles.scss";
 
@@ -23,14 +24,14 @@ const SandBox = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link as={Link} to="/demo">Demo Table</Nav.Link>
+            <Nav.Link as={Link} to="/">Demo Table</Nav.Link>
             <Nav.Link as={Link} to="/context-demo">Context Demo</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
 
       <Switch>
-        <Route path="/demo" exact component={DemoTable} />
+        <Route path="/" exact component={DemoTable} />
         <Route path="/context-demo" exact component={ContextDemo} />
       </Switch>
     </Router>

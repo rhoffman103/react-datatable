@@ -81,10 +81,10 @@ const ContextDemo = () => {
     <DataTableProvider options={options}>
       <p>The Options Context is provided to all descendant tables.</p>
       <div className="row">
-        <div className="col-12 col-md-6" style={{ height: "40vh" }}>
+        <div className="col-12 col-md-6 " style={{ height: "500px" }}>
           <DataTable data={data} columns={columnsOne} />
         </div>
-        <div className="col-12 col-md-6" style={{ height: "40vh" }}>
+        <div className="col-12 col-md-6" style={{ height: "500px" }}>
           <DataTable data={data} columns={columnsTwo} />
         </div>
       </div>
